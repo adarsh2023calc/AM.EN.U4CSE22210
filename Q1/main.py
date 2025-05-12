@@ -13,6 +13,10 @@ app = FastAPI()
 class Numbers(BaseModel):
     value : str
 
+class Correlation(BaseModel):
+    valuem:str
+    comp1:str
+    comp2:str
 
 from dotenv import load_dotenv
 import os
@@ -39,6 +43,39 @@ def calculate_average(num:Numbers):
 
 
     return data
+
+
+
+@app.post("/correlation")
+def calculate_average(corr:Correlation):
+    if not corr.comp1:
+        raise HTTPException(status_code=400, detail="comp1 not provided")
+    
+    if not corr.comp2:
+        raise HTTPException(status_code=400, detail="comp2 not provided")
+    
+    if not corr.valuem:
+        raise HTTPException(status_code=400, detail="m not provided")
+
+    
+    data_fetch = requests.get(f"http://20.244.56.144/stockcorrelation?minutes={corr.valuem}&ticker={corr.comp1}",
+                             headers=
+                             {
+                                  "Authorization": f"Bearer {access_token}"
+                             }
+                             )
+            # Debug: Print and check the content first
+    print(data_fetch.status_code)
+    print(data_fetch.text)
+
+        # Ensure the response is JSON
+    if data_fetch.headers.get("Content-Type") == "application/json":
+        return data_fetch.json()
+    else:
+        raise HTTPException(status_code=500, detail="Invalid response format from external API")
+
+
+
 
 
 
