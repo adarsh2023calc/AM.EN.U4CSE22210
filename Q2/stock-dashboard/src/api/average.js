@@ -4,7 +4,7 @@ import axios from 'axios';
 export const fetchAverageData = async (minutes) => {
   try {
     const response = await axios.post('http://localhost:8000/average', {
-      value: minutes,
+      value: minutes.toString(),
     });
     return response.data;
   } catch (error) {
